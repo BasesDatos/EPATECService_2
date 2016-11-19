@@ -18,6 +18,7 @@ namespace EPATEC_Service_2.Models
         public string _cliente { get; set; }
         public string _vendedor { get; set; }
         public int _sucursal { get; set; }
+        public string _nombreSucursal { get; set; }
         public List<ProductoPedido> _productos { get; set; }
     }
 }

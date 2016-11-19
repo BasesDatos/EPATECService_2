@@ -112,6 +112,83 @@ namespace EPATEC_Service_2.Controllers
         }
 
 
+        /// <summary>
+        /// Método para obtener todos los productos registrados
+        /// </summary>
+        /// <returns></returns>
+        [Route("getAll")]
+        [HttpGet]
+        public IHttpActionResult getAll()
+        {
+            List<Pedido> orders = new List<Pedido>();
+            using (SqlConnection connection = DataBase.getConnection())
+            {
+                SqlCommand command = new SqlCommand("dbo.obtenerPedidos", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Pedido order = new Pedido();
+                        order._id = reader.GetInt32(0);
+                        string date = reader.GetDateTime(1).ToString("yyyy-MM-dd");
+                        //string hour = reader.GetDateTime(2).ToString("HH:mm:ss");
+                        order._fechaHora = DateTime.Parse(date);
+                        order._total = reader.GetDecimal(3);
+                        order._estado = reader.GetBoolean(4);
+                        order._cliente = reader.GetString(5);
+                        order._nombreSucursal = reader.GetString(6);
+                        orders.Add(order);
+                    }
+                    return Json(orders);
+                }
+                catch(SqlException ex) { return Json(Constants.ERROR_CONNECTION_DATABSE); }
+                finally { connection.Close(); }
+            }
+        }
+
+
+
+        /// <summary>
+        /// Método para obtener los productos de un pedido
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("getProductsOrder/{id}")]
+        [HttpPost]
+        public IHttpActionResult getProducts(int id)
+        {
+            List<ProductoPedido> products = new List<ProductoPedido>();
+            using (SqlConnection connection = DataBase.getConnection())
+            {
+                SqlCommand command = new SqlCommand("dbo.obtenerProductoPedido", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                command.Parameters.AddWithValue("@idPedido", SqlDbType.Int).Value = id;
+
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        ProductoPedido product = new ProductoPedido();
+                        product._nombre = reader.GetString(0);
+                        product._precio = reader.GetDecimal(1);
+                        product._cantidad = reader.GetInt32(2);
+                        products.Add(product);
+                    }
+                    return Json(products);
+                }
+                catch(SqlException ex) { return Json(Constants.ERROR_CONNECTION_DATABSE); }
+                finally { connection.Close(); }
+            }
+        }
+
 
     }
 }
