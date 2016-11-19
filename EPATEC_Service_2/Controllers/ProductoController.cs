@@ -59,5 +59,40 @@ namespace EPATEC_Service_2.Controllers
         }
 
 
+        [Route("getAll")]
+        [HttpGet]
+        public IHttpActionResult getAll()
+        {
+            List<Producto> productos = new List<Producto>();
+            using(SqlConnection connection = DataBase.getConnection())
+            {
+                SqlCommand command = new SqlCommand("dbo.obtenerProductos", connection);
+                command.CommandType = CommandType.StoredProcedure;
+
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Producto producto = new Producto();
+                        producto._id = reader.GetInt32(0);
+                        producto._nombre = reader.GetString(1);
+                        producto._descripcion = reader.GetString(2);
+                        producto._exento = reader.GetBoolean(3);
+                        producto._cantDisponible = reader.GetInt32(4);
+                        producto._precio = reader.GetDecimal(5);
+                        producto._categoria = reader.GetString(6);
+                        producto._sucursal = reader.GetString(7);
+                        productos.Add(producto);
+                    }
+                    return Json(productos);
+                }
+                catch(SqlException ex) { return Json(Constants.ERROR_CONNECTION_DATABSE); }
+                finally { connection.Close(); }
+            }
+        }
+
+
     }
 }

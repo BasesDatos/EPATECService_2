@@ -15,5 +15,9 @@ namespace EPATEC_Service_2.Models
         public DateTime _fechaHora { get; set; }
         public decimal _total { get; set; }
         public bool _estado { get; set; } 
+        public string _cliente { get; set; }
+        public string _vendedor { get; set; }
+        public int _sucursal { get; set; }
+        public List<ProductoPedido> _productos { get; set; }
     }
 }

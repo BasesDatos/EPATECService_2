@@ -56,7 +56,9 @@ namespace EPATEC_Service_2.Controllers
                 catch(SqlException ex) { return Json(ex.Message); }
                 finally { connection.Close(); }
             }
-
         }
+
+
+       
     }
 }

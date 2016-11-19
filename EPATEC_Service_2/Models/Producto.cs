@@ -19,5 +19,6 @@ namespace EPATEC_Service_2.Models
         public decimal _precio { get; set; }
         public string _categoria { get; set; }
         public string _proveedor { get; set; }
+        public string _sucursal { get; set; }
     }
 }
